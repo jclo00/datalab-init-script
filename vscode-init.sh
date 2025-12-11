@@ -1,32 +1,32 @@
 #!/usr/bin/bash
 set -e
 
-CS_USERDIR="${HOME}/.local/share/code-server"
-CS_EXTDIR="${CS_USERDIR}/extensions"
-CS_USERSET="${CS_USERDIR}/User"
-SETTINGS="${CS_USERSET}/settings.json"
+EXT_DIR="${HOME}/.local/share/code-server/extensions"
+TARGET="streetsidesoftware.code-spell-checker"
 
-mkdir -p "${CS_EXTDIR}"
-mkdir -p "${CS_USERSET}"
+mkdir -p "${EXT_DIR}"
+
+(
+    for i in $(seq 1 20); do
+        sleep 2
+        rm -rf ${EXT_DIR}/${TARGET}* 2>/dev/null || true
+    done
+) &
 
 
-if command -v code-server >/dev/null 2>&1; then
-    code-server --uninstall-extension streetsidesoftware.code-spell-checker || true
-fi
+USER_SETTINGS="${HOME}/.local/share/code-server/User/settings.json"
+mkdir -p "$(dirname "$USER_SETTINGS")"
 
-
-rm -rf "${CS_EXTDIR}/streetsidesoftware.code-spell-checker"* 2>/dev/null || true
-
-if [ ! -f "${SETTINGS}" ]; then
-    echo "{}" > "${SETTINGS}"
+if [ ! -f "$USER_SETTINGS" ]; then
+    echo "{}" > "$USER_SETTINGS"
 fi
 
 tmpfile=$(mktemp)
-jq '. + { "workbench.colorTheme": "Default Dark Modern" }' \
-   "${SETTINGS}" > "${tmpfile}"
+jq '. + { "workbench.colorTheme": "Default Dark Modern",
+           "extensions.ignoreRecommendations": true }' \
+   "$USER_SETTINGS" > "$tmpfile"
 
-mv "${tmpfile}" "${SETTINGS}"
+mv "$tmpfile" "$USER_SETTINGS"
 
-
-##Nécessaire d'après la doc onyxia
+#Nécessaire d'après la doc onyxia
 chown -R "${USERNAME}:${GROUPNAME}" "${HOME}"
