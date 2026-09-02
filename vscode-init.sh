@@ -27,15 +27,13 @@ fi
 # Extension, version Open VSX (souvent quelques versions en retard)
 code-server --install-extension anthropic.claude-code
 
-# Variante Marketplace, si la version Open VSX est trop ancienne ou
-# incompatible avec la version de code-server de l'image (voir le README) :
-# CLAUDE_EXT_VERSION="2.0.1"
-# wget --retry-on-http-error=429 \
-#     "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/Anthropic/vsextensions/claude-code/${CLAUDE_EXT_VERSION}/vspackage" \
-#     -O claude-code.vsix.gz
-# gzip -d claude-code.vsix.gz
-# code-server --install-extension claude-code.vsix
-# rm -f claude-code.vsix
+# Court-circuiter l'assistant de premier lancement (pod ephemere)
+CLAUDE_CONFIG="${HOME}/.claude.json"
+[ -f "${CLAUDE_CONFIG}" ] || echo "{}" > "${CLAUDE_CONFIG}"
+
+jq '. + {"hasCompletedOnboarding": true}
+    | .projects["/home/onyxia/work"].hasTrustDialogAccepted = true' \
+    "${CLAUDE_CONFIG}" > "${CLAUDE_CONFIG}.tmp" && mv "${CLAUDE_CONFIG}.tmp" "${CLAUDE_CONFIG}"
 
 # --------------------------------------------------------------------------- #
 # 3. Reglages VSCode                                                          #
