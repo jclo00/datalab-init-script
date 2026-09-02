@@ -37,8 +37,7 @@ fi
 # Cles internes au produit, non documentees : a verifier apres montee de version.
 CLAUDE_CONFIG="${USER_HOME}/.claude.json"
 
-if [ ! -f "${CLAUDE_CONFIG}" ]; then
-    cat << EOF > "${CLAUDE_CONFIG}"
+cat << EOF > "${CLAUDE_CONFIG}"
 {
     "hasCompletedOnboarding": true,
     "projects": {
@@ -48,7 +47,6 @@ if [ ! -f "${CLAUDE_CONFIG}" ]; then
     }
 }
 EOF
-fi
 
 # --------------------------------------------------------------------------- #
 # 4. Permissions                                                              #
