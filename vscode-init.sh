@@ -35,6 +35,17 @@ jq '. + {"hasCompletedOnboarding": true}
     | .projects["/home/onyxia/work"].hasTrustDialogAccepted = true' \
     "${CLAUDE_CONFIG}" > "${CLAUDE_CONFIG}.tmp" && mv "${CLAUDE_CONFIG}.tmp" "${CLAUDE_CONFIG}"
 
+
+# --------------------------------------------------------------------------- #
+# Outillage Python                                                            #
+# --------------------------------------------------------------------------- #
+
+# autoDocstring : squelette de docstring depuis la signature
+code-server --install-extension njpwerner.autodocstring
+
+# desinstal Flake8
+code-server --uninstall-extension ms-python.flake8 || true
+
 # --------------------------------------------------------------------------- #
 # 3. Reglages VSCode                                                          #
 # --------------------------------------------------------------------------- #
@@ -45,11 +56,18 @@ if [ ! -f "${SETTINGS_FILE}" ]; then
     mkdir -p "$(dirname "${SETTINGS_FILE}")"
     echo "{}" > "${SETTINGS_FILE}"
 fi
-
 jq '. + {
     "plantuml.render": "Local",
     "plantuml.exportFormat": "svg",
-    "plantuml.previewAutoUpdate": true
+    "plantuml.previewAutoUpdate": true,
+    "autoDocstring.docstringFormat": "numpy",
+    "autoDocstring.startOnNewLine": true,
+    "autoDocstring.includeName": false,
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {"source.organizeImports.ruff": "explicit"}
+    }
 }' "${SETTINGS_FILE}" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "${SETTINGS_FILE}"
 
 # Filet de securite : si le script tourne en root, rendre la main a l'utilisateur
