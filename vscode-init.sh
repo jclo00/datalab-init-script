@@ -54,9 +54,9 @@ jq '. + {
     "autoDocstring.includeName": false,
     "editor.formatOnSave": true,
     "githubIssues.queries": [
-        {"label": "Mes issues", "query": "is:open assignee:${user} sort:updated-desc"},
-        {"label": "Toutes les issues ouvertes", "query": "is:open sort:updated-desc"},
-        {"label": "Non assignees", "query": "is:open no:assignee sort:created-desc"}
+        {"label": "Mes issues", "query": "repo:${owner}/${repository} is:open assignee:${user} sort:updated-desc"},
+        {"label": "Toutes les issues ouvertes", "query": "repo:${owner}/${repository} is:open sort:updated-desc"},
+        {"label": "Non assignees", "query": "repo:${owner}/${repository} is:open no:assignee sort:created-desc"}
     ],
     "githubIssues.useBranchForIssues": "off",
     "githubIssues.workingIssueFormatScm": "${issueTitle}\n\nCloses #${issueNumber}",
