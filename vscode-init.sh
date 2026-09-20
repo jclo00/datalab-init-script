@@ -5,7 +5,7 @@
 # jebbs.plantuml est publiee sur Open VSX : installation directe
 code-server --install-extension jebbs.plantuml
 # Pas de Java ni de Graphviz dans les images du datalab : le rendu se fait
-# cote serveur (voir plantuml.render dans les reglages, section 3)
+# cote serveur (voir plantuml.render dans les reglages, section 4)
 # --------------------------------------------------------------------------- #
 # 2. Claude Code                                                              #
 # --------------------------------------------------------------------------- #
@@ -24,6 +24,12 @@ jq '. + {"hasCompletedOnboarding": true}
     | .projects["/home/onyxia/work"].hasTrustDialogAccepted = true' \
     "${CLAUDE_CONFIG}" > "${CLAUDE_CONFIG}.tmp" && mv "${CLAUDE_CONFIG}.tmp" "${CLAUDE_CONFIG}"
 # --------------------------------------------------------------------------- #
+# 3. GitHub : issues et tableau de suivi                                      #
+# --------------------------------------------------------------------------- #
+# Vue laterale des issues, assignation, commentaires, autocompletion des
+# @collegue et des #numero dans le message de commit
+code-server --install-extension github.vscode-pull-request-github
+# --------------------------------------------------------------------------- #
 # Outillage Python                                                            #
 # --------------------------------------------------------------------------- #
 # autoDocstring : squelette de docstring depuis la signature
@@ -31,7 +37,7 @@ code-server --install-extension njpwerner.autodocstring
 # desinstal Flake8
 code-server --uninstall-extension ms-python.flake8 || true
 # --------------------------------------------------------------------------- #
-# 3. Reglages VSCode                                                          #
+# 4. Reglages VSCode                                                          #
 # --------------------------------------------------------------------------- #
 SETTINGS_FILE="${HOME}/.local/share/code-server/User/settings.json"
 if [ ! -f "${SETTINGS_FILE}" ]; then
@@ -47,6 +53,13 @@ jq '. + {
     "autoDocstring.startOnNewLine": true,
     "autoDocstring.includeName": false,
     "editor.formatOnSave": true,
+    "githubIssues.queries": [
+        {"label": "Mes issues", "query": "is:open assignee:${user} sort:updated-desc"},
+        {"label": "Toutes les issues ouvertes", "query": "is:open sort:updated-desc"},
+        {"label": "Non assignees", "query": "is:open no:assignee sort:created-desc"}
+    ],
+    "githubIssues.useBranchForIssues": "off",
+    "githubIssues.workingIssueFormatScm": "${issueTitle}\n\nCloses #${issueNumber}",
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.codeActionsOnSave": {"source.organizeImports.ruff": "explicit"}
